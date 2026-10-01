@@ -1,7 +1,17 @@
 import pytest
 from pydantic import ValidationError
-
+from httpx import AsyncClient, ASGITransport
+from app.main import app
 from app.main import predict_endpoint, PredictionRequest
+
+@pytest.fixture
+async def client():
+    """Fixture qui fournit un client HTTP asynchrone pour tester l'API."""
+    async with AsyncClient(
+        transport=ASGITransport(app=app), 
+        base_url="http://test"
+    ) as ac:
+        yield ac
 
 @pytest.mark.anyio
 def test_predict_success_basic():
