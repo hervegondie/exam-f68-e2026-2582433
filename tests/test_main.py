@@ -21,12 +21,12 @@ def test_predict_invalid_data ():
     with pytest.raises(ValidationError):
         PredictionRequest(features=["a", "b", "c"])
         
-#Test unitaire - Liste vide       
-#Ajoutez dans le fichier tests/test_main.py un nouveau test unitaire 
+#Test unitaire - Liste vide
 @pytest.mark.anyio
 async def test_predict_success_features_vide(client):
-
-    #Vérification du comportement de predict_endpoint avec une liste de features vide.
+    """
+    Vérification du comportement de predict_endpoint avec une liste de features vide.
+    """
     payload = {
         "features": []
     }
@@ -36,9 +36,8 @@ async def test_predict_success_features_vide(client):
     data = response.json()
     assert "predictions" in data  
     assert data["predictions"] == []
-    
-# Test unitaires- valeurs négatives
-#Ajoutez dans tests/test_main.py un second test unitaire 
+
+# Test unitaire - Valeurs négatives
 @pytest.mark.anyio
 async def test_predict_success_features_negatif(client):
     """
@@ -47,6 +46,15 @@ async def test_predict_success_features_negatif(client):
     payload = {
         "features": [-2.0, -4.5, -10.0]
     }
+    
+    response = await client.post("/predict", json=payload)
+    
+    assert response.status_code == 200
+    
+    data = response.json()
+    assert "predictions" in data  
+    assert isinstance(data["predictions"], list)
+    assert len(data["predictions"]) > 0
     
     response = await client.post("/predict", json=payload)
     
